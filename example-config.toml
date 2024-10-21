@@ -1,0 +1,64 @@
+[[triggers]]
+name = "hass_zha"
+type = "hass_zha"
+base_url = "wss://hass.local/"
+token = "<jwt token>"
+
+# define a device that we'll call "symfonisk", the actual remote is identified
+# by its ieee address
+[[triggers.devices]]
+name = "symfonisk"
+ieee = "94:de:b8:ff:fe:53:fd:97"
+
+# define the buttons on the remote
+
+# use hass developer tools to listen to the "zha_event" event, press the button,
+# and it will look like this:
+
+# event_type: zha_event
+# data:
+#   device_ieee: 94:de:b8:ff:fe:53:fd:97
+#   command: toggle
+#   params: {}
+[[triggers.devices.buttons]]
+# if we press the button that we'll call "play"...
+name = "play"
+# ...hass reports it as a "toggle" command
+command = "toggle"
+
+[[triggers.devices.buttons]]
+name = "one_dot"
+command = "shortcut_v1_events"
+params = { shortcut_button = 1, shortcut_event = 1 }
+
+# event_type: zha_event
+# data:
+#   device_ieee: 94:de:b8:ff:fe:53:fd:97
+#   command: shortcut_v1_events
+#   params:
+#     shortcut_button: 1
+#     shortcut_event: 1
+
+[[triggers.devices.buttons]]
+name = "two_dots"
+command = "shortcut_v1_events"
+params = { shortcut_button = 2, shortcut_event = 1 }
+
+[[triggers.devices.buttons]]
+name = "one_dot_double"
+command = "shortcut_v1_events"
+params = { shortcut_button = 1, shortcut_event = 2 }
+
+[[triggers.devices.buttons]]
+name = "two_dots_double"
+command = "shortcut_v1_events"
+params = { shortcut_button = 2, shortcut_event = 2 }
+
+# define an action that will be triggered
+[[mapping]]
+# <trigger name>.<device name>.<button name>
+trigger = "hass_zha.symfonisk.play"
+# currently only "shell" is supported
+action = "shell"
+# will be run with sh -c "<command>"
+command = "notify-send 'play'"
